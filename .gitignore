@@ -10,3 +10,9 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/NeuroJ/nbproject/private/
+
+#test files for the unit test
+/NeuroJ/test_data
+/NeuroJ/build/
+/NeuroJ/src/cntFile/cntRAF.cnt
