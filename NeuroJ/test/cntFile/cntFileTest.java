@@ -69,7 +69,7 @@ public class cntFileTest {
                 2328.0, 2326.0};
             double[][] data = new double[this.file01.getNumberOfChannels()]
                     [(int)this.file01.getNumberOfSamples()];
-            this.file01.readData(data);
+            this.file01.readRawData(data);
             for(int i=0;i<expectedChannel1.length;i++){
                 assertEquals(expectedChannel1[i], data[0][i],0);
             }
@@ -89,7 +89,7 @@ public class cntFileTest {
             double[] expectedChannel15 = new double[]{0.0, -1.0, 0.0, -1.0, 0,0};
             double[][] data = new double[this.file02.getNumberOfChannels()]
                     [(int)this.file02.getNumberOfSamples()];
-            this.file02.readData(data);
+            this.file02.readRawData(data);
             for(int i=50;i<expectedChannel8.length;i++){
                 assertEquals(expectedChannel8[i], data[8][i],0);
             }
@@ -113,7 +113,7 @@ public class cntFileTest {
                -19.8474, -18.0350, -18.8982};
            double[][] data = new double[this.file01.getNumberOfChannels()]
                     [(int)this.file01.getNumberOfSamples()];
-            this.file01.readData(data);
+            this.file01.readRawData(data);
             this.file01.scaleData(data);
             for(int i=0;i<expectedChannel1.length;i++){
                 assertEquals(expectedChannel1[i], data[0][i],0.0009);
@@ -140,7 +140,7 @@ public class cntFileTest {
                -5.0086, -15.2657};
            double[][] data = new double[this.file02.getNumberOfChannels()]
                     [(int)this.file02.getNumberOfSamples()];
-            this.file02.readData(data);
+            this.file02.readRawData(data);
             this.file02.scaleData(data);
             for(int i=0;i<expectedChannel1.length;i++){
                 assertEquals(expectedChannel1[i], data[0][i],0.0009);

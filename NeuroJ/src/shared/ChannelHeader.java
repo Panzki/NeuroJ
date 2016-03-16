@@ -12,34 +12,31 @@ package shared;
  */
 public class ChannelHeader{
     private short baseline;
-    private double sensitivity;
     private double calib;
+    private double sensitivity;
 
     public ChannelHeader(){
         super();
     }
 
-    public void setBaseline(short baseline){
-        this.baseline = baseline;
-    }
 
     public short getBaseline(){
         return this.baseline;
     }
-
-    public void setSensitivity(double sensitivity){
-        this.sensitivity = sensitivity;
+    public void setBaseline(short baseline){
+        this.baseline = baseline;
     }
-
-    public double getSensitivity(){
-        return this.sensitivity;
+    public double getCalib(){
+        return this.calib;
     }
 
     public void setCalib(double calib){
         this.calib = calib;
     }
-
-    public double getCalib(){
-        return this.calib;
+    public double getSensitivity(){
+        return this.sensitivity;
+    }
+    public void setSensitivity(double sensitivity){
+        this.sensitivity = sensitivity;
     }
 }
