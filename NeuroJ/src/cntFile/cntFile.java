@@ -103,7 +103,7 @@ public class cntFile {
      * @param data[number of channels][number of samples]
      * @throws IOException 
      */
-    private void readData(double data[][]) throws IOException,
+    public void readData(double data[][]) throws IOException,
             ArrayIndexOutOfBoundsException{
         if(data.length != this.nchannels || data[0].length<this.nums){
             throw new ArrayIndexOutOfBoundsException("Failed to read data to"
