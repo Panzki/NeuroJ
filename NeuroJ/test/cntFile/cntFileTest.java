@@ -21,12 +21,7 @@ public class cntFileTest {
     
     cntFile file01;
     cntFile file02;
-    
-    public cntFileTest() {
-        this.file01 = new cntFile("./test_data/test01.cnt");
-        this.file02 = new cntFile("./test_data/test02.cnt");
-    }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
@@ -37,6 +32,8 @@ public class cntFileTest {
     
     @Before
     public void setUp() {
+        this.file01 = new cntFile("./test_data/test01.cnt");
+        this.file02 = new cntFile("./test_data/test02.cnt");
     }
     
     @After
@@ -104,5 +101,64 @@ public class cntFileTest {
             System.out.println(ex);
             fail("Failed file02ReadDataTest");
         }
+    }
+    
+    @Test
+    public void file01ScaleDataTest(){
+       try{
+           double[] expectedChannel1 = new double[]{-265.4630, -264.7719,
+               -265.4630, -267.1907, -269.3504};
+           double[] expectedChannel14 = new double[]{-114.4631, -117.6985,
+               -121.0213, -123.4697, -124.8688};
+           double[] expectedChanne21 = new double[]{-32.6188, -25.2839,
+               -19.8474, -18.0350, -18.8982};
+           double[][] data = new double[this.file01.getNumberOfChannels()]
+                    [(int)this.file01.getNumberOfSamples()];
+            this.file01.readData(data);
+            this.file01.scaleData(data);
+            for(int i=0;i<expectedChannel1.length;i++){
+                assertEquals(expectedChannel1[i], data[0][i],0.0009);
+            }
+            for(int i=0;i<expectedChannel14.length;i++){
+                assertEquals(expectedChannel14[i], data[14][i+4], 0.0009);
+            }
+            for(int i=0;i<expectedChanne21.length;i++){
+                assertEquals(expectedChanne21[i], data[21][i], 0.0009);
+            }
+       }catch(IOException ex){
+           System.out.println(ex);
+           fail("failed file01ScaleDataTest");
+       } 
+    }
+    
+    @Test
+    public void file02ScaleDataTest(){
+       try{
+           double[] expectedChannel1 = new double[]{-9.5471, 6.6719, -12.8906, 
+               -4.9683, -10.8362};
+           double[] expectedChannel3 = new double[]{0, -0.0017, 0, -0.0017, 0};
+           double[] expectedChanne10 = new double[]{-19.6415, -5.0018, -15.2506,
+               -5.0086, -15.2657};
+           double[][] data = new double[this.file02.getNumberOfChannels()]
+                    [(int)this.file02.getNumberOfSamples()];
+            this.file02.readData(data);
+            //this.file02.scaleData(data);
+            for(int i=0;i<25;i++){
+                System.out.println(i + ":\t" + data[0][i]);
+            }
+            for(int i=0;i<expectedChannel1.length;i++){
+                //assertEquals(expectedChannel1[i], data[0][i],0.0009);
+                //System.out.println(data[0][i]);
+            }
+            for(int i=0;i<expectedChanne10.length;i++){
+                assertEquals(expectedChanne10[i], data[13][i+4], 0.0009);
+            }
+            for(int i=0;i<expectedChannel3.length;i++){
+                assertEquals(expectedChannel3[i], data[10][i], 0.0009);
+            }
+       }catch(IOException ex){
+           System.out.println(ex);
+           fail("failed file02ScaleDataTest");
+       } 
     }
 }

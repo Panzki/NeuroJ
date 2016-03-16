@@ -28,12 +28,40 @@ public class cntFile {
     
     public cntFile(String path){
         try{
-            rawFile = new RandomAccessFile(path, "r");
+            this.rawFile = new RandomAccessFile(path, "r");
             this.readFileHeader();
             this.channelHeaders = this.readChannelHeader();
         } catch(IOException ex){
             System.out.println(ex);
         }
+    }
+    
+    /**
+     * Calculate the size an array has to be to fit all the samples for a given
+     * intervall (in sec).
+     * @param intervall in SEC
+     * @return 
+     */
+    public int calculateArraySizeFromSecIntervall(double intervall){
+        return (int)Math.ceil(intervall*this.samplingRate);
+    }
+    
+    /**
+     * Convert time from sec to "number of the sample" = tick.
+     * @param timeInSec
+     * @return 
+     */
+    private long getTickFromSec(double timeInSec){
+        return (long)timeInSec*samplingRate;
+    }
+    
+    /**
+     * Convert time from tick to sec.
+     * @param timeInTicks
+     * @return 
+     */
+    private double getSecFromTick(long timeInTicks){
+        return (double)(timeInTicks/samplingRate);
     }
     
     /**
@@ -96,6 +124,37 @@ public class cntFile {
         byte[] version = new byte[12];
         this.rawFile.read(version);
         return new String(version);
+    }
+    
+    /**
+     * Scale the raw data from the file to micro volts.
+     * @param data 
+     */
+    public void scaleData(double[][] data){
+        for(int i=0;i<this.nchannels;i++){
+            int baseline = (int)this.channelHeaders[i].getBaseline();
+            double sensitivity = (double)this.channelHeaders[i].getSensitivity();
+            double calib = (double)this.channelHeaders[i].getCalib();
+            double scaleFactor = sensitivity*(calib/204.8);
+            for(int n=0;n<data[i].length;n++){
+                data[i][n] = (data[i][n]-baseline)*scaleFactor;
+            }
+        }
+    }
+    
+    /**
+     * Scales the raw data for on specific channel to micro volts.
+     * @param data
+     * @param channelNumber 
+     */
+    public void scaleChannelData(double[] data, int channelNumber){
+        int baseline = (int)this.channelHeaders[channelNumber].getBaseline();
+        double sensitivity = (double)this.channelHeaders[channelNumber].getSensitivity();
+        double calib = (double)this.channelHeaders[channelNumber].getCalib();
+        double scaleFactor = sensitivity*(calib/204.8);
+        for(int n=0;n<data.length;n++){
+            data[n] = (data[n]-baseline)*scaleFactor;
+        }
     }
     
     /**
