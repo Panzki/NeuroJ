@@ -184,8 +184,8 @@ public class cntFile {
         many bytes for channel 2 and so on.
         */
         if(channelOffset <= 1){
-            for(int currentChannel=0;currentChannel<nchannels;currentChannel++){
-                for(int currentOffset=0;currentOffset<nums;currentOffset++){
+            for(int currentOffset=0;currentOffset<nums;currentOffset++){
+                for(int currentChannel=0;currentChannel<nchannels;currentChannel++){   
                     this.rawFile.read(buffer);
                     byte[] bb = {0,0,buffer[1],buffer[0]};
                     //this will give us a correct signed value corresponding to int16

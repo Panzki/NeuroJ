@@ -85,9 +85,8 @@ public class cntFileTest {
     @Test
     public void file02ReadDataTest(){
         try{
-            double[] expectedChannel8 = new double[]{343.0, 0.0, 0.0, 0.0 ,-1154.0};
-            double[] expectedChannel15 = new double[]{-24567.0, -1.0, -17436.0,
-                -1.0, -18227.0};
+            double[] expectedChannel8 = new double[]{11995, -10538, 9635, 9310, 11557};
+            double[] expectedChannel15 = new double[]{0.0, -1.0, 0.0, -1.0, 0,0};
             double[][] data = new double[this.file02.getNumberOfChannels()]
                     [(int)this.file02.getNumberOfSamples()];
             this.file02.readData(data);
@@ -142,19 +141,16 @@ public class cntFileTest {
            double[][] data = new double[this.file02.getNumberOfChannels()]
                     [(int)this.file02.getNumberOfSamples()];
             this.file02.readData(data);
-            //this.file02.scaleData(data);
-            for(int i=0;i<25;i++){
-                System.out.println(i + ":\t" + data[0][i]);
-            }
+            this.file02.scaleData(data);
             for(int i=0;i<expectedChannel1.length;i++){
-                //assertEquals(expectedChannel1[i], data[0][i],0.0009);
+                assertEquals(expectedChannel1[i], data[0][i],0.0009);
                 //System.out.println(data[0][i]);
             }
             for(int i=0;i<expectedChanne10.length;i++){
-                assertEquals(expectedChanne10[i], data[13][i+4], 0.0009);
+                assertEquals(expectedChanne10[i], data[10][i+4], 0.0009);
             }
             for(int i=0;i<expectedChannel3.length;i++){
-                assertEquals(expectedChannel3[i], data[10][i], 0.0009);
+                assertEquals(expectedChannel3[i], data[3][i], 0.0009);
             }
        }catch(IOException ex){
            System.out.println(ex);
