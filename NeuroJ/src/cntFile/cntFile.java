@@ -150,12 +150,7 @@ public class cntFile {
         //base offset for file header and channel headers
         int dataOffset = nchannels*75 + 900;
         if(channelOffset<=1){
-            //add offset to skip channels
-            for(int i=0;i<channel;i++){
-                dataOffset += (samplingRate*nums);
-            }
-            //for every tick skip 2 bytes
-            dataOffset += (sTimeTick*2);
+            dataOffset += (sTimeTick*this.nchannels) + channel;
             this.rawFile.seek(dataOffset);
             //i<Math.floor((eTimeTick-sTimeTick-1)*2)
             for(int i=0;i<data.length;i++){
@@ -163,6 +158,8 @@ public class cntFile {
                 byte[] bb = {0,0,buffer[1],buffer[0]};
                 //this will give us a correct signed value corresponding to int16
                 data[i] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
+                dataOffset += (this.nchannels-1);
+                this.rawFile.seek(dataOffset);
             }
         }
         else{

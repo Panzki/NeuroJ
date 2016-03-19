@@ -11,5 +11,5 @@ package shared;
  * @author matthias
  */
 public class MyConstans {
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 }
