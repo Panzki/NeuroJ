@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Copyright (C) 2016 Matthias Steffen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cntFile;
 
@@ -14,7 +25,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 /**
- *
+ * This class represents a .cnt to file and allows to accedd it.
  * @author matthias
  */
 public class cntFile {
@@ -23,8 +34,7 @@ public class cntFile {
     private long eventTablePos;
     private String fileVersion;
     private int nchannels;
-    private long nums;
-    //todo: rename vars
+    private long nsamples;
     private RandomAccessFile rawFile;
     private int samplingRate;
     
@@ -53,7 +63,7 @@ public class cntFile {
     }
     
     public long getNumberOfSamples(){
-        return this.nums;
+        return this.nsamples;
     }
     
     public int getSamplingRate(){
@@ -67,7 +77,7 @@ public class cntFile {
      */
     public void readRawData(double data[][]) throws IOException,
             ArrayIndexOutOfBoundsException{
-        if(data.length != this.nchannels || data[0].length<this.nums){
+        if(data.length != this.nchannels || data[0].length<this.nsamples){
             throw new ArrayIndexOutOfBoundsException("Failed to read data to"
                     + " the given array. Make sure that the dimesions of the"
                     + " array are nchannels*nsamples!");
@@ -87,7 +97,7 @@ public class cntFile {
         many bytes for channel 2 and so on.
         */
         if(channelOffset <= 1){
-            for(int currentOffset=0;currentOffset<nums;currentOffset++){
+            for(int currentOffset=0;currentOffset<nsamples;currentOffset++){
                 for(int currentChannel=0;currentChannel<nchannels;currentChannel++){   
                     this.rawFile.read(buffer);
                     byte[] bb = {0,0,buffer[1],buffer[0]};
@@ -108,7 +118,7 @@ public class cntFile {
             }
 
             int chunkCounter = 1;
-            while(chunkCounter*(channelOffset/2) < nums){
+            while(chunkCounter*(channelOffset/2) < nsamples){
                 for(int currentChannel=0;currentChannel<nchannels;currentChannel++){
                     for(int currentOffset=0;currentOffset<(channelOffset/2);currentOffset++){
                         //it is possible that the last chunk is not completly filled with data,
@@ -137,7 +147,7 @@ public class cntFile {
                     +  channel);
         }
         else if(sTimeSec < 0 || eTimeSec < sTimeSec || 
-                eTimeSec > (this.nums/this.samplingRate)){
+                eTimeSec > (this.nsamples/this.samplingRate)){
             throw new BadIntervallException("Invalid intervall! sTime: " + 
                     sTimeSec + " eTime: " + eTimeSec);
         }
@@ -146,11 +156,11 @@ public class cntFile {
         }
         byte[] buffer = new byte[2];
         long sTimeTick = (long)Math.floor(sTimeSec*samplingRate);
-        long eTimeTick = (long)Math.ceil(eTimeSec*samplingRate);
         //base offset for file header and channel headers
         int dataOffset = nchannels*75 + 900;
         if(channelOffset<=1){
-            dataOffset += (sTimeTick*this.nchannels) + channel;
+            //         seek to "chunk"               "seek to channel in chunk"
+            dataOffset += 2*sTimeTick*this.nchannels + 2*channel;
             this.rawFile.seek(dataOffset);
             //i<Math.floor((eTimeTick-sTimeTick-1)*2)
             for(int i=0;i<data.length;i++){
@@ -158,7 +168,7 @@ public class cntFile {
                 byte[] bb = {0,0,buffer[1],buffer[0]};
                 //this will give us a correct signed value corresponding to int16
                 data[i] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
-                dataOffset += (this.nchannels-1);
+                dataOffset += (this.nchannels*2);
                 this.rawFile.seek(dataOffset);
             }
         }
@@ -185,43 +195,53 @@ public class cntFile {
             //since the chunk's data could begin earlyer
             int firstTickInChunk = ((int)sTimeTick-sTickChunk);
             int firstChunkOffset = 0;
-            for(int i=firstTickInChunk;i<chunkData.length;i++){
-                data[firstChunkOffset] = chunkData[i];
+            //if all the requested data is in the first chunk, we can read just
+            //the first chunk with an offset
+            if(data.length < (chunkData.length - firstTickInChunk)){
+               for(int i=0;i<data.length;i++){
+                data[firstChunkOffset] = chunkData[i+firstTickInChunk];
                 firstChunkOffset++;
+                } 
             }
-            //skip to the second chunk and the right channel in the chunk
-            dataOffset += chunkSizeBytes+(channel*channelOffset);
-            this.rawFile.seek(dataOffset);
-            int n = 0;
-            //read all the contius chunks
-            for(int chunkCounter=0;chunkCounter<(numberOfChunksToRead-1);chunkCounter++){
-                //System.out.println("Reading chunk number: " + (chunkCounter+1));
-                //read one chunk of data for the channel
-                for(int i=0;i<(int)Math.floor(channelOffset/2);i++){
+            else{
+                for(int i=firstTickInChunk;i<chunkData.length;i++){
+                    data[firstChunkOffset] = chunkData[i];
+                    firstChunkOffset++;
+                }
+                //skip to the second chunk and the right channel in the chunk
+                dataOffset += chunkSizeBytes+(channel*channelOffset);
+                this.rawFile.seek(dataOffset);
+                int n = 0;
+                //read all the contius chunks
+                for(int chunkCounter=0;chunkCounter<(numberOfChunksToRead-1);chunkCounter++){
+                    //System.out.println("Reading chunk number: " + (chunkCounter+1));
+                    //read one chunk of data for the channel
+                    for(int i=0;i<(int)Math.floor(channelOffset/2);i++){
+                        this.rawFile.read(buffer);
+                        byte[] bb = {0,0,buffer[1],buffer[0]};
+                        //this will give us a correct signed value corresponding to int16
+                        data[firstChunkOffset+n] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
+                        //System.out.println("index: "+(firstChunkOffset+n) + " data: " + data[firstChunkOffset+n]);
+                        n++;
+                    }
+                    //skip to the next chunk and the channel in this chunk
+                    dataOffset += chunkSizeBytes+(channel*channelOffset);
+                    this.rawFile.seek(dataOffset);
+                }
+                //read last chunk
+                for(int i=0;i<chunkData.length;i++){
                     this.rawFile.read(buffer);
                     byte[] bb = {0,0,buffer[1],buffer[0]};
                     //this will give us a correct signed value corresponding to int16
-                    data[firstChunkOffset+n] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
-                    //System.out.println("index: "+(firstChunkOffset+n) + " data: " + data[firstChunkOffset+n]);
-                    n++;
+                    chunkData[i] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
                 }
-                //skip to the next chunk and the channel in this chunk
-                dataOffset += chunkSizeBytes+(channel*channelOffset);
-                this.rawFile.seek(dataOffset);
-            }
-            //read last chunk
-            for(int i=0;i<chunkData.length;i++){
-                this.rawFile.read(buffer);
-                byte[] bb = {0,0,buffer[1],buffer[0]};
-                //this will give us a correct signed value corresponding to int16
-                chunkData[i] = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getShort();
-            }
-            //fill the x remaining elements of the data array with the first x datapoints from the last chunk
-            int x = 0;
-            while((firstChunkOffset+n)<data.length){
-                data[firstChunkOffset+n] = chunkData[x];
-                n++;
-                x++;
+                //fill the x remaining elements of the data array with the first x datapoints from the last chunk
+                int x = 0;
+                while((firstChunkOffset+n)<data.length){
+                    data[firstChunkOffset+n] = chunkData[x];
+                    n++;
+                    x++;
+                }
             }
         }
     }
@@ -345,14 +365,14 @@ public class cntFile {
         this.samplingRate = this.readSamplingRate();
         this.channelOffset = this.readChannelOffset();
         //calculate the number of samples
-        this.nums = (eventTablePos-(nchannels*75 + 900))/(nchannels*2);
+        this.nsamples = (eventTablePos-(nchannels*75 + 900))/(nchannels*2);
         if(MyConstans.DEBUG){
             System.out.println("File Header:");
             System.out.println("\t File version: " + this.fileVersion);
             System.out.println("\t Number of channels: " + this.nchannels);
             System.out.println("\t Sampling Rate: " + this.samplingRate);
             System.out.println("\t channelOffset: " + this.channelOffset);
-            System.out.println("\t Number of samples: " + this.nums);
+            System.out.println("\t Number of samples: " + this.nsamples);
             System.out.println("\t Channel offset: " + this.channelOffset);
             System.out.println("\t Event table position: " + this.eventTablePos);
         }

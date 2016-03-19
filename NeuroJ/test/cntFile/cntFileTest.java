@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Copyright (C) 2016 Matthias Steffen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cntFile;
 
@@ -75,8 +86,8 @@ public class cntFileTest {
             for(int i=0;i<expectedChannel1.length;i++){
                 assertEquals(expectedChannel1[i], data[0][i],0);
             }
-            for(int i=50;i<expectedChannel23.length;i++){
-                assertEquals(expectedChannel23[i], data[23][i],0);
+            for(int i=0;i<expectedChannel23.length;i++){
+                assertEquals(expectedChannel23[i], data[23][i+50],0);
             }
         } catch(IOException ex){
             System.out.println(ex);
@@ -88,14 +99,14 @@ public class cntFileTest {
     public void file02ReadDataTest(){
         try{
             double[] expectedChannel8 = new double[]{11995, -10538, 9635, 9310, 11557};
-            double[] expectedChannel15 = new double[]{0.0, -1.0, 0.0, -1.0, 0,0};
+            double[] expectedChannel15 = new double[]{0.0, -1.0, 0.0, -1.0, 0.0};
             double[][] data = new double[file02.getNumberOfChannels()]
                     [(int)file02.getNumberOfSamples()];
             file02.readRawData(data);
-            for(int i=50;i<expectedChannel8.length;i++){
+            for(int i=0;i<expectedChannel8.length;i++){
                 assertEquals(expectedChannel8[i], data[8][i],0);
             }
-            for(int i=1000;i<expectedChannel15.length;i++){
+            for(int i=0;i<expectedChannel15.length;i++){
                 assertEquals(expectedChannel15[i], data[15][i],0);
             }
         } catch(IOException ex){
@@ -161,22 +172,45 @@ public class cntFileTest {
     }
     
     @Test
+    public void file01readRawIntervallDataTest(){
+        try{
+            double[] expectedChannel5 = new double[]{-970.0, -963.0, -961.0,
+                -959.0, -956.0};
+            double[] expectedChannel6 = new double[]{-47.0, -38.0, -31.0,
+                -30.0, -38.0};
+            double[] data = new double[file01.calculateArraySizeFromSecIntervall(0.005)];
+            file01.readRawIntervallData(5,0.001,0.006,data);
+            for(int i=0;i<expectedChannel5.length;i++){
+                assertEquals(expectedChannel5[i], data[i],0);
+            }
+            file01.readRawIntervallData(6, 0.005, 0.01, data);
+            for(int i=0;i<expectedChannel6.length;i++){           
+                assertEquals(expectedChannel6[i], data[i],0);
+            }
+        } catch(IOException | BadChannelException | BadIntervallException ex){
+            System.out.println(ex);
+            fail("Failed file02radRawIntervallDataTest");
+        }
+    }
+    
+    @Test
     public void file02readRawIntervallDataTest(){
         try{
             double[] expectedChannel8 = new double[]{11995, -10538, 9635, 9310, 11557};
-            double[] expectedChannel15 = new double[]{0.0, -1.0, 0.0, -1.0, 0,0};
+            double[] expectedChannel2 = new double[]{31665.0, -5115.0, -28314.0,
+                3928.0, -27383.0};
             double[] data = new double[file02.calculateArraySizeFromSecIntervall(0.1)];
             file02.readRawIntervallData(8,0.0,0.01,data);
-            for(int i=50;i<expectedChannel8.length;i++){
-                System.out.println(expectedChannel8[i] + "\t" + data[i]);
+            for(int i=0;i<expectedChannel8.length;i++){
                 assertEquals(expectedChannel8[i], data[i],0);
             }
-//            for(int i=1000;i<expectedChannel15.length;i++){
-//                assertEquals(expectedChannel15[i], data[15],0);
-//            }
+            file02.readRawIntervallData(2, 0.008, 0.018, data);
+            for(int i=0;i<expectedChannel2.length;i++){
+                assertEquals(expectedChannel2[i], data[i],0);
+            }
         } catch(IOException | BadChannelException | BadIntervallException ex){
             System.out.println(ex);
-            fail("Failed file02ReadDataTest");
+            fail("Failed file02radRawIntervallDataTest");
         }
     }
 }

@@ -16,3 +16,4 @@ hs_err_pid*
 /NeuroJ/test_data
 /NeuroJ/build/
 /NeuroJ/src/cntFile/cntRAF.cnt
+/NeuroJ/dist/
