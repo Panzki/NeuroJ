@@ -1,5 +1,5 @@
 # NeuroJ
-Java implementation for the Neuroscan cnt/egg file format.
+Java implementation for the Neuroscan cnt/eeg file format.
 
 # Example Usage
 ```java

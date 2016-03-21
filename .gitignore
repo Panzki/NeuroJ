@@ -15,5 +15,3 @@ hs_err_pid*
 #test files for the unit test
 /NeuroJ/test_data
 /NeuroJ/build/
-/NeuroJ/src/cntFile/cntRAF.cnt
-/NeuroJ/dist/
