@@ -58,6 +58,18 @@ public class cntFile {
         return (int)Math.ceil(intervall*this.samplingRate);
     }
     
+    /**
+     * Close the cnt file after usage.
+     */
+    public void close(){
+        try{
+            this.rawFile.close();
+        } catch(IOException ex){
+            System.out.println("Failed to close file!");
+            System.out.println(ex);
+        }
+    }
+    
     public int getNumberOfChannels(){
         return this.nchannels;
     }
