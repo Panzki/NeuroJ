@@ -23,6 +23,10 @@ package neuroJExceptions;
 public class BadIntervallException extends Exception{
     public BadIntervallException(){}
     
+    /**
+     * Basic constructor
+     * @param msg error message
+     */
     public BadIntervallException(String msg){
         super(msg);
     }

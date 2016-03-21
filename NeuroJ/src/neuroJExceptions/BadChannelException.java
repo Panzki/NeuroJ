@@ -23,6 +23,10 @@ package neuroJExceptions;
 public class BadChannelException extends Exception{
     public BadChannelException(){}
     
+    /**
+     * Basic constructor
+     * @param msg error message
+     */
     public BadChannelException(String msg){
         super(msg);
     }

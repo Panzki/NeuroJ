@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 /**
  * This class represents a .cnt to file and allows to accedd it.
- * @author matthias
+ * @author Matthias Steffen
  */
 public class cntFile {
     private ChannelHeader[] channelHeaders;
@@ -38,6 +38,10 @@ public class cntFile {
     private RandomAccessFile rawFile;
     private int samplingRate;
     
+    /**
+     * Default constructor for cntFile. Takes care of necessary setup.
+     * @param path path to the .cnt File
+     */
     public cntFile(String path){
         try{
             this.rawFile = new RandomAccessFile(path, "r");
@@ -70,14 +74,26 @@ public class cntFile {
         }
     }
     
+    /**
+     * Returns the number of channels for this cnt file
+     * @return number of channels
+     */
     public int getNumberOfChannels(){
         return this.nchannels;
     }
     
+    /**
+     * Returns the number of samples for this cnt file.
+     * @return number of samples
+     */
     public long getNumberOfSamples(){
         return this.nsamples;
     }
     
+    /**
+     * Returns the sampling rate for this cnt file.
+     * @return sampling rate
+     */
     public int getSamplingRate(){
         return this.samplingRate;
     }
@@ -151,6 +167,18 @@ public class cntFile {
         }
     }
     
+    /**
+     * 
+     * @param channel channel you want to read from (counting starts at 0)
+     * @param sTimeSec start time of the intervall in seconds
+     * @param eTimeSec end time of the intervall in seconds
+     * @param data target array, data will be stored in this array. make sure
+     * the array is large enough by using calculateArraySizeFromSecIntervall()
+     * @throws IOException
+     * @throws BadChannelException
+     * @throws BadIntervallException
+     * @throws ArrayIndexOutOfBoundsException 
+     */
     public void readRawIntervallData(int channel, double sTimeSec, double eTimeSec, double data[])
         throws IOException, BadChannelException, BadIntervallException, 
             ArrayIndexOutOfBoundsException{

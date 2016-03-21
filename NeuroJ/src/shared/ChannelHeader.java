@@ -31,27 +31,57 @@ public class ChannelHeader{
     private short baseline;
     private double calib;
     private double sensitivity;
-
+    
+    /**
+     * Default constructor for ChannelHeader
+     */
     public ChannelHeader(){
         super();
     }
-
+    
+    /**
+     * Returns the baseline value for this channel.
+     * @return baseline value for this channel
+     */
     public short getBaseline(){
         return this.baseline;
     }
+    /**
+     * Sets the new baseline value for this channel.
+     * @param baseline new baseline value
+     */
     public void setBaseline(short baseline){
         this.baseline = baseline;
     }
+    
+    /**
+     * Returns the calibration value for this cahnnel.
+     * @return calibration value for this channel
+     */
     public double getCalib(){
         return this.calib;
     }
 
+    /**
+     * Sets a new calibration value for this channel.
+     * @param calib new calibration value
+     */
     public void setCalib(double calib){
         this.calib = calib;
     }
+    
+    /**
+     * Returns the sensitivity value for this channel.
+     * @return sensitivity value
+     */
     public double getSensitivity(){
         return this.sensitivity;
     }
+    
+    /**
+     * Sets a new sensitivity value for this channel.
+     * @param sensitivity new sensitivity value
+     */
     public void setSensitivity(double sensitivity){
         this.sensitivity = sensitivity;
     }
