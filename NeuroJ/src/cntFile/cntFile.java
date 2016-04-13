@@ -74,6 +74,28 @@ public class cntFile {
         }
     }
     
+    public String[] getChannelNames(){
+        String[] channelNames = new String[this.nchannels];
+        for(int i=0;i<channelNames.length;i++){
+            channelNames[i] = this.channelHeaders[i].getChannelName();
+            System.out.println(channelNames[i]);
+        }
+        return channelNames;
+    }
+    
+    /**
+     * This methode turns a byte buffer in to a string and removes " " "\" "'"
+     * @param stringBuffer byte array containing the channel name
+     * @return chnanel name
+     */
+    private String getChannelNameFromBuffer(byte[] stringBuffer){
+        String channelName = new String(stringBuffer);
+        channelName = channelName.replace(" ", "");
+        channelName = channelName.replace("\"", "");
+        channelName = channelName.replace("'", "");
+        return channelName;
+    }
+    
     /**
      * Returns the number of channels for this cnt file
      * @return number of channels
@@ -345,9 +367,13 @@ public class cntFile {
         //skip file header
         this.rawFile.seek(900);
         byte[] buffer = new byte[4];
+        byte[] stringBuffer = new byte[10];
         for(int i=0;i<nchannels;i++){
             channelHeaderInformation[i] = new ChannelHeader();
-            this.rawFile.skipBytes(47);
+            this.rawFile.read(stringBuffer);
+            channelHeaderInformation[i].setChannelName(
+                    this.getChannelNameFromBuffer(stringBuffer));
+            this.rawFile.skipBytes(37);
             channelHeaderInformation[i].setBaseline((short)this.rawFile.read());
             this.rawFile.skipBytes(11);
             this.rawFile.read(buffer);

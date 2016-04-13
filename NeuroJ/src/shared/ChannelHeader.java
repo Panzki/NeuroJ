@@ -31,6 +31,7 @@ public class ChannelHeader{
     private short baseline;
     private double calib;
     private double sensitivity;
+    private String channelName;
     
     /**
      * Default constructor for ChannelHeader
@@ -70,6 +71,21 @@ public class ChannelHeader{
         this.calib = calib;
     }
     
+    /**
+     * Returns the name of this channel.
+     * @return channel name
+     */
+    public String getChannelName(){
+        return this.channelName;
+    }
+    
+    /**
+     * Set the name for this channel
+     * @param newChannelname new channel name for this channel
+     */
+    public void setChannelName(String newChannelname){
+        this.channelName = newChannelname;
+    }
     /**
      * Returns the sensitivity value for this channel.
      * @return sensitivity value
