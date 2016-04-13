@@ -74,11 +74,14 @@ public class cntFile {
         }
     }
     
+    /**
+     * Get the names for all channels of this file.
+     * @return channel names
+     */
     public String[] getChannelNames(){
         String[] channelNames = new String[this.nchannels];
         for(int i=0;i<channelNames.length;i++){
             channelNames[i] = this.channelHeaders[i].getChannelName();
-            System.out.println(channelNames[i]);
         }
         return channelNames;
     }
