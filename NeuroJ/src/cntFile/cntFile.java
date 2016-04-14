@@ -75,7 +75,11 @@ public class cntFile {
     }
     
     /**
+<<<<<<< HEAD
      * Retruns the names for all channels of this cnt file.
+=======
+     * Get the names for all channels of this file.
+>>>>>>> 2485f7f4e0a93ee9d7e82a30fc5c27f06ef0fd70
      * @return channel names
      */
     public String[] getChannelNames(){

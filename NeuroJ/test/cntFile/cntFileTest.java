@@ -213,4 +213,15 @@ public class cntFileTest {
             fail("Failed file02radRawIntervallDataTest");
         }
     }
+    
+    @Test
+    public void file01getChannelNamesTest(){
+        System.out.println("cntFile.cntFileTest.file01getChannelNamesTest()");
+        String[] channelNames = file01.getChannelNames();
+        assertEquals("FP1", channelNames[0]);
+        assertEquals("FP2", channelNames[1]);
+        assertEquals("T3", channelNames[12]);
+        assertEquals("Pz", channelNames[17]);
+        assertEquals("CB2", channelNames[30]);
+    }
 }
