@@ -142,7 +142,7 @@ public class cntFile {
         /*
         The channel offset determines how the data is stored in the file. If the
         channel offset is <=1 data is ordered by channels. It starts with the first
-        sample for the first channel, folllowd continously by all following
+        sample for the first channel, folllowd continuously by all following
         samples for this channel.
         If the channelOffset is >1 data is stored in chunks. Each chunk contais
         channelOffset/2 (one sample = 2 bytes) samples for each channel. The
